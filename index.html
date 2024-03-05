@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link rel="stylesheet" href="styles/style.css">
+   <link rel="stylesheet" href="styles/media.css">
+   <title>Сапер</title>
+</head>
+
+<body>
+   <h1 class="title">Сапер</h1>
+   <form class="form" id="pre_settings">
+      <div class="form_control">
+         <label for="size">Размер поля</label>
+         <input type="number" class="input" id="size" placeholder="10" value="10" min="5" max="15" required>
+      </div>
+
+      <div class="form_control">
+         <label for="bombs">Количество бомб (%)</label>
+         <input type="number" class="input" id="bombs" placeholder="25" value="25" min="15" max="90" required>
+      </div>
+
+      <button type="submit" class="btn btn_orange">Начать игру</button>
+   </form>
+   <div id="container" class="hidden">
+      <span>
+         <span id="flags"></span>
+         <span id="timer"></span>
+      </span>
+      <div id="field"></div>
+      <button id="restart" class="btn btn_orange hidden">Заново</button>
+   </div>
+
+   <script src="js/helpers.js"></script>
+   <script src="js/game/game.controller.js"></script>
+   <script src="js/game/game.model.js"></script>
+   <script src="js/app.js"></script>
+</body>
+
+</html>
