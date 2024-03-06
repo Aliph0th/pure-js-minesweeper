@@ -51,9 +51,9 @@ class GameController {
          this.#field = this.#createField(x, y);
       }
       const cell = this.#field?.[x]?.[y];
-      if (cell?.value === BOMB_INDEX) {
+      if (cell?.value === BOMB_INDEX && !cell?.isMarked) {
          this.#finishGame(false);
-      } else if (!cell?.isMarked) {
+      } else if (cell && !cell.isMarked) {
          this.#openAvaiableCells(x, y);
          this.#checkWin();
       }
