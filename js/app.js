@@ -1,7 +1,6 @@
 'use strict';
 
 const BOMB_INDEX = 9;
-
 let gameController;
 
 document.getElementById('pre_settings').addEventListener('submit', e => {

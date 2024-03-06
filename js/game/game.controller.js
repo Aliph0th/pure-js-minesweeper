@@ -11,7 +11,6 @@ class GameController {
    constructor(size, bombsPercentage) {
       this.#size = size;
       this.#bombsCount = Math.ceil((size ** 2 * bombsPercentage) / 100);
-      this.#field = this.#createField();
    }
 
    startGame() {
@@ -29,16 +28,16 @@ class GameController {
          .addEventListener('click', this.#reset.bind(this));
    }
 
-   #createField() {
+   #createField(x, y) {
       const field = Array(this.#size)
          .fill()
          .map(() => Array(this.#size).fill(0));
       let currentCount = 0;
       while (currentCount < this.#bombsCount) {
-         const x = Math.floor(Math.random() * this.#size);
-         const y = Math.floor(Math.random() * this.#size);
-         if (!field[x][y]) {
-            field[x][y] = BOMB_INDEX;
+         const a = Math.floor(Math.random() * this.#size);
+         const b = Math.floor(Math.random() * this.#size);
+         if (!field[a][b] && x !== a && y !== b) {
+            field[a][b] = BOMB_INDEX;
             currentCount++;
          }
       }
@@ -48,6 +47,9 @@ class GameController {
    }
 
    #handleCellClick(x, y) {
+      if (!this.#field) {
+         this.#field = this.#createField(x, y);
+      }
       const cell = this.#field?.[x]?.[y];
       if (cell?.value === BOMB_INDEX) {
          this.#finishGame(false);
@@ -109,8 +111,8 @@ class GameController {
 
    #handleCellMark(e, x, y) {
       e.preventDefault();
-      const cell = this.#field[x][y];
-      if (!cell.isOpened) {
+      const cell = this.#field?.[x]?.[y];
+      if (cell && !cell.isOpened) {
          if (cell.isMarked) {
             cell.isMarked = false;
             this.#markedCellsCount--;
