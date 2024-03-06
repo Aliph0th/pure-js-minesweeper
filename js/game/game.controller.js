@@ -19,7 +19,8 @@ class GameController {
       this.#model.createField(
          this.#size,
          this.#handleCellClick.bind(this),
-         this.#handleCellMark.bind(this)
+         this.#handleCellMark.bind(this),
+         this.#toggleHighlightSurroundingCells.bind(this)
       );
       this.#model.setFlagsText(`🚩: 0/${this.#bombsCount}`);
 
@@ -46,14 +47,32 @@ class GameController {
       );
    }
 
+   #toggleHighlightSurroundingCells(x, y, highlight) {
+      const cell = this.#field?.[x]?.[y];
+      if (cell && cell.isOpened) {
+         for (let i = -1; i <= 1; i++) {
+            for (let j = -1; j <= 1; j++) {
+               const nearCell = this.#field?.[x + i]?.[y + j];
+               if (nearCell && (i || j) && !nearCell.isOpened) {
+                  const fn = highlight ? this.#model.openCell : this.#model.closeCell;
+                  fn.call(this.#model, x + i, y + j);
+               }
+            }
+         }
+      }
+   }
+
    #handleCellClick(x, y) {
       if (!this.#field) {
          this.#field = this.#createField(x, y);
       }
       const cell = this.#field?.[x]?.[y];
-      if (cell?.value === BOMB_INDEX && !cell?.isMarked) {
+      if (!cell) {
+         return;
+      }
+      if (cell.value === BOMB_INDEX && !cell.isMarked) {
          this.#finishGame(false);
-      } else if (cell && !cell.isMarked) {
+      } else if (!cell.isMarked) {
          this.#openAvaiableCells(x, y);
          this.#checkWin();
       }

@@ -10,7 +10,12 @@ class GameModel {
 
    #cells = [];
 
-   createField(size, callbackClick, callbackMark) {
+   createField(
+      size,
+      callbackClick,
+      callbackMark,
+      callbackHighlight
+   ) {
       this.#fieldElement.style.gridTemplate = `repeat(${size}, 1fr) / repeat(${size}, 1fr)`;
       for (let i = 0; i < size; i++) {
          const cellRow = [];
@@ -19,6 +24,9 @@ class GameModel {
             newCell.classList.add('cell');
             newCell.addEventListener('click', () => callbackClick(i, j));
             newCell.addEventListener('contextmenu', e => callbackMark(e, i, j));
+            newCell.addEventListener('mousedown', () => callbackHighlight(i, j, true));
+            newCell.addEventListener('mouseup', () => callbackHighlight(i, j, false));
+            newCell.addEventListener('mouseleave', () => callbackHighlight(i, j, false));
             cellRow.push(newCell);
             this.#fieldElement.appendChild(newCell);
          }
@@ -46,19 +54,22 @@ class GameModel {
       this.#finalScreen.classList.add('hidden');
    }
 
-   openCell(x, y, value) {
+   openCell(x, y, value = '') {
       const cell = this.#cells[x][y];
-      let text;
+      let text = '';
       if (value === BOMB_INDEX) {
          text = '💣';
-      } else if (value === 0) {
-         text = '';
-      } else {
+      } else if (value > 0) {
          text = value;
          cell.classList.add(`color-${value}`);
       }
       cell.classList.add('opened');
       cell.innerText = text;
+   }
+
+   closeCell(x, y) {
+      const cell = this.#cells[x][y];
+      cell.classList.remove('opened');
    }
 
    showSettingsForm() {
