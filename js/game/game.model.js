@@ -54,7 +54,7 @@ class GameModel {
       this.#finalScreen.classList.add('hidden');
    }
 
-   openCell(x, y, value = '') {
+   openCell(x, y, value) {
       const cell = this.#cells[x][y];
       let text = '';
       if (value === BOMB_INDEX) {
@@ -67,9 +67,12 @@ class GameModel {
       cell.innerText = text;
    }
 
-   closeCell(x, y) {
+   closeCell(x, y, isMarked) {
       const cell = this.#cells[x][y];
       cell.classList.remove('opened');
+      if (isMarked) {
+         cell.innerText = '🚩';
+      }
    }
 
    showSettingsForm() {

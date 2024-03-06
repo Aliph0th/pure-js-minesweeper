@@ -49,13 +49,17 @@ class GameController {
 
    #toggleHighlightSurroundingCells(x, y, highlight) {
       const cell = this.#field?.[x]?.[y];
-      if (cell && cell.isOpened) {
-         for (let i = -1; i <= 1; i++) {
-            for (let j = -1; j <= 1; j++) {
-               const nearCell = this.#field?.[x + i]?.[y + j];
-               if (nearCell && (i || j) && !nearCell.isOpened) {
-                  const fn = highlight ? this.#model.openCell : this.#model.closeCell;
-                  fn.call(this.#model, x + i, y + j);
+      if (!cell || !cell?.isOpened) {
+         return;
+      }
+      for (let i = -1; i <= 1; i++) {
+         for (let j = -1; j <= 1; j++) {
+            const nearCell = this.#field?.[x + i]?.[y + j];
+            if (nearCell && (i || j) && !nearCell.isOpened) {
+               if (highlight) {
+                  this.#model.openCell(x + i, y + j);
+               } else {
+                  this.#model.closeCell(x + i, y + j, nearCell.isMarked);
                }
             }
          }
