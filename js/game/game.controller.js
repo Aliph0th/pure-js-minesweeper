@@ -15,11 +15,18 @@ class GameController {
    }
 
    startGame() {
+      this.#model.hideSettingsForm();
+      this.#model.showGameContainer();
       this.#model.createField(
          this.#size,
          this.#handleCellClick.bind(this),
          this.#handleCellMark.bind(this)
       );
+      this.#model.setFlagsText(`🚩: 0/${this.#bombsCount}`);
+
+      document
+         .getElementById('restart')
+         .addEventListener('click', this.#reset.bind(this));
    }
 
    #createField() {
@@ -43,9 +50,10 @@ class GameController {
    #handleCellClick(x, y) {
       const cell = this.#field?.[x]?.[y];
       if (cell?.value === BOMB_INDEX) {
-         console.log('bob');
+         this.#finishGame(false);
       } else if (!cell?.isMarked) {
          this.#openAvaiableCells(x, y);
+         this.#checkWin();
       }
    }
 
@@ -72,12 +80,54 @@ class GameController {
       }
    }
 
+   #checkWin() {
+      if (
+         this.#size ** 2 - this.#openedCellsCount === this.#markedCellsCount &&
+         this.#markedCellsCount === this.#bombsCount
+      ) {
+         this.#finishGame(true);
+      }
+   }
+
+   #finishGame(isWin) {
+      this.#model.showFinalScreen(isWin);
+      if (!isWin) {
+         this.#showBombs();
+      }
+   }
+
+   #showBombs() {
+      this.#field.forEach((row, x) =>
+         row.forEach((cell, y) => {
+            if (cell.value === BOMB_INDEX) {
+               this.#model.setMarked(x, y, false);
+               this.#model.openCell(x, y, cell.value);
+            }
+         })
+      );
+   }
+
    #handleCellMark(e, x, y) {
       e.preventDefault();
       const cell = this.#field[x][y];
       if (!cell.isOpened) {
-         cell.isMarked = !cell.isMarked;
+         if (cell.isMarked) {
+            cell.isMarked = false;
+            this.#markedCellsCount--;
+         } else {
+            cell.isMarked = true;
+            this.#markedCellsCount++;
+            this.#checkWin(true);
+         }
          this.#model.setMarked(x, y, cell.isMarked);
+         this.#model.setFlagsText(`🚩: ${this.#markedCellsCount}/${this.#bombsCount}`);
       }
+   }
+
+   #reset() {
+      this.#model.removeAllCells();
+      this.#model.hideFinalScreen();
+      this.#model.hideGameContainer();
+      this.#model.showSettingsForm();
    }
 }

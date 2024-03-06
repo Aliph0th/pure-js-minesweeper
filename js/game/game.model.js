@@ -2,7 +2,12 @@
 
 class GameModel {
    #fieldElement = document.getElementById('field');
-   #flagsElement = document.getElementById('state');
+   #flagsElement = document.getElementById('flags');
+   #finalScreen = document.getElementById('end_game_screen');
+   #finalTextElement = document.getElementById('end_game_text');
+   #containerElement = document.getElementById('container');
+   #formElement = document.getElementById('pre_settings');
+
    #cells = [];
 
    createField(size, callbackClick, callbackMark) {
@@ -29,18 +34,49 @@ class GameModel {
       this.#cells[x][y].innerText = state ? '🚩' : '';
    }
 
+   showFinalScreen(isWin) {
+      const bgColor = isWin ? '#3baf2796' : '#af272796';
+      const text = isWin ? 'Вы победили 👌' : 'Вы проиграли 💥';
+
+      this.#finalScreen.classList.remove('hidden');
+      this.#finalScreen.style.backgroundColor = bgColor;
+      this.#finalTextElement.innerText = text;
+   }
+   hideFinalScreen() {
+      this.#finalScreen.classList.add('hidden');
+   }
+
    openCell(x, y, value) {
       const cell = this.#cells[x][y];
       let text;
       if (value === BOMB_INDEX) {
-         text = '💣'
+         text = '💣';
       } else if (value === 0) {
-         text = ''
+         text = '';
       } else {
          text = value;
          cell.classList.add(`color-${value}`);
       }
       cell.classList.add('opened');
       cell.innerText = text;
+   }
+
+   showSettingsForm() {
+      this.#formElement.classList.remove('hidden');
+   }
+   hideSettingsForm() {
+      this.#formElement.classList.add('hidden');
+   }
+
+   showGameContainer() {
+      this.#containerElement.classList.remove('hidden');
+   }
+   hideGameContainer() {
+      this.#containerElement.classList.add('hidden');
+   }
+
+   removeAllCells() {
+      this.#fieldElement.innerHTML = '';
+      this.#cells = [];
    }
 }
