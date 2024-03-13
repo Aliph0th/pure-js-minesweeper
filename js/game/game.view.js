@@ -1,6 +1,6 @@
 'use strict';
 
-class GameModel {
+class GameView {
    #fieldElement = document.getElementById('field');
    #flagsElement = document.getElementById('flags');
    #finalScreen = document.getElementById('end_game_screen');

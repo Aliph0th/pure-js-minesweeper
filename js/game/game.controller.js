@@ -1,7 +1,7 @@
 'use strict';
 
 class GameController {
-   #model = new GameModel();
+   #view = new GameView();
    #size;
    #bombsCount;
    #field;
@@ -14,15 +14,15 @@ class GameController {
    }
 
    startGame() {
-      this.#model.hideSettingsForm();
-      this.#model.showGameContainer();
-      this.#model.createField(
+      this.#view.hideSettingsForm();
+      this.#view.showGameContainer();
+      this.#view.createField(
          this.#size,
          this.#handleCellClick.bind(this),
          this.#handleCellMark.bind(this),
          this.#toggleHighlightSurroundingCells.bind(this)
       );
-      this.#model.setFlagsText(`🚩: 0/${this.#bombsCount}`);
+      this.#view.setFlagsText(`🚩: 0/${this.#bombsCount}`);
 
       document
          .getElementById('restart')
@@ -57,9 +57,9 @@ class GameController {
             const nearCell = this.#field?.[x + i]?.[y + j];
             if (nearCell && (i || j) && !nearCell.isOpened) {
                if (highlight) {
-                  this.#model.openCell(x + i, y + j);
+                  this.#view.openCell(x + i, y + j);
                } else {
-                  this.#model.closeCell(x + i, y + j, nearCell.isMarked);
+                  this.#view.closeCell(x + i, y + j, nearCell.isMarked);
                }
             }
          }
@@ -91,7 +91,7 @@ class GameController {
             cell.isMarked = false;
             this.#markedCellsCount--;
          }
-         this.#model.openCell(x, y, cell.value);
+         this.#view.openCell(x, y, cell.value);
 
          if (!cell.value) {
             for (let i = -1; i <= 1; i++) {
@@ -115,7 +115,7 @@ class GameController {
    }
 
    #finishGame(isWin) {
-      this.#model.showFinalScreen(isWin);
+      this.#view.showFinalScreen(isWin);
       if (!isWin) {
          this.#showBombs();
       }
@@ -125,8 +125,8 @@ class GameController {
       this.#field.forEach((row, x) =>
          row.forEach((cell, y) => {
             if (cell.value === BOMB_INDEX) {
-               this.#model.setMarked(x, y, false);
-               this.#model.openCell(x, y, cell.value);
+               this.#view.setMarked(x, y, false);
+               this.#view.openCell(x, y, cell.value);
             }
          })
       );
@@ -144,15 +144,15 @@ class GameController {
             this.#markedCellsCount++;
             this.#checkWin(true);
          }
-         this.#model.setMarked(x, y, cell.isMarked);
-         this.#model.setFlagsText(`🚩: ${this.#markedCellsCount}/${this.#bombsCount}`);
+         this.#view.setMarked(x, y, cell.isMarked);
+         this.#view.setFlagsText(`🚩: ${this.#markedCellsCount}/${this.#bombsCount}`);
       }
    }
 
    #reset() {
-      this.#model.removeAllCells();
-      this.#model.hideFinalScreen();
-      this.#model.hideGameContainer();
-      this.#model.showSettingsForm();
+      this.#view.removeAllCells();
+      this.#view.hideFinalScreen();
+      this.#view.hideGameContainer();
+      this.#view.showSettingsForm();
    }
 }
